@@ -1,0 +1,1 @@
+The course work of the Communication Networks, which simulates the situation where client and server define communication parameters using reliable TCP connection and then exchange data using UDP.
