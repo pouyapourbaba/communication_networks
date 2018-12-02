@@ -2,23 +2,19 @@ import socket
 import struct
 import sys
 
+# import the classes
+import tcp_class
+
 def main():
 
     host = '87.92.113.80'
     port = 10000
 
-    # initialize the TCP socket
-    tcp_sock = socket.socket()
-    tcp_sock.connect((host, port))
-
-    # message to be sent to the server via TCP, in byte strings
-    tcp_msg = 'HELLO\r\n'
-    tcp_msg = tcp_msg.encode('UTF-8')
-    tcp_sock.send(tcp_msg)
-
-    # receive the data with a buffer of 1024 bytes
-    tcp_rsp = tcp_sock.recv(1024)
-    tcp_rsp = tcp_rsp.decode('UTF-8')
+    # send and receive via TCP protocol
+    tcp = tcp_class.TCP(host, port)
+    tcp_sock = tcp.sock_con()
+    tcp.send("HELLO\r\n")
+    tcp_rsp = tcp.receive()
 
     # tokenize the data to extract the identity token and the UDP port
     tokens = tcp_rsp.split(' ')
