@@ -6,7 +6,7 @@ class TCP():
         self.port = port
 
     # initialize the TCP socket and connect to the given ip address and port number
-    def sock_con(self):
+    def sock_connect(self):
         self.sock = socket.socket()
         self.sock.connect((self.ip, self.port))
         return self.sock
