@@ -21,9 +21,7 @@ def main():
     id_token = tokens[1]
     udp_port = tokens[2]
 
-
     ''' ****UDP PART**** '''
-
     udp = udp_class.UDP(host, udp_port)
 
     # UDP message and packing it in the right structure
@@ -38,10 +36,12 @@ def main():
     # packing the udp message
     udp_msg = struct.pack('!8s??HH64s', CID, ACK, EOM, data_remaining, content_length, content)
 
+    # get the EOM of the received message and the list of words from the server
     EOM, received_word_list = udp.send_and_receive(udp_msg)
     reversed_words = udp.reversed_words_to_be_sent(received_word_list)
     print(EOM)
 
+    # send the reversed list of words to the server until the last message from the server, i.e, EOM=True
     while (EOM is not True):
         udp_msg = struct.pack('!8s??HH64s', CID, ACK, EOM, data_remaining, len(reversed_words), reversed_words.encode('utf-8'))
         EOM, received_word_list = udp.send_and_receive(udp_msg)
@@ -49,7 +49,6 @@ def main():
         print(EOM)
 
     udp.udp_close()
-    print('udp_closed')
 
 if __name__ == '__main__':
     main()
