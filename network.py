@@ -4,7 +4,6 @@ import sys
 import tcp_class
 import udp_class
 
-
 def main():
     host = '87.92.113.80'
     port = 10000
@@ -15,6 +14,7 @@ def main():
     # send and receive via TCP protocol
     tcp = tcp_class.TCP(host, port)
     tcp_response = tcp.send_and_receive(message)
+    tcp.tcp_close()
 
     # tokenize the data to extract the identity token and the UDP port
     tokens = tcp_response.split(' ')
@@ -28,35 +28,28 @@ def main():
 
     # UDP message and packing it in the right structure
     # cid: char[8] , ack: Bool, eom: Bool[8], data_remaining: unsigned short, content_length: unsigned short, content: char[64]
-    cid = id_token.encode('utf-8')  # client's id token
-    ack = True  # acknowledgment
-    eom = False
+    CID = id_token.encode('utf-8')  # client's id token
+    ACK = True  # acknowledgment
+    EOM = False
     data_remaining = 0  # length of the data still remaining when using multipart messages
     content = ("Hello from " + id_token + "\r\n").encode('UTF-8')   # message content
     content_length = len(content) # length of the message
 
     # packing the udp message
-    udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, content_length, content)
+    udp_msg = struct.pack('!8s??HH64s', CID, ACK, EOM, data_remaining, content_length, content)
 
-    received_word_list = udp.send_and_receive(udp_msg)
-    print(received_word_list)
+    EOM, received_word_list = udp.send_and_receive(udp_msg)
     reversed_words = udp.reversed_words_to_be_sent(received_word_list)
-    print(reversed_words)
+    print(EOM)
 
-    # udp = udp_class.UDP(host, udp_port)
-    # udp_sock = udp.sock_connect()
-    ''' ****Send the reveres words back to the server 1st time**** '''
-    # new_msg = udp.new_msg(reversed_words)
-
-    while received_word_list[0] != 'You' and received_word_list[1] != 'replied':
-        udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(reversed_words), reversed_words.encode('utf-8'))
-        received_word_list = udp.send_and_receive(udp_msg)
-        print(received_word_list)
+    while (EOM is not True):
+        udp_msg = struct.pack('!8s??HH64s', CID, ACK, EOM, data_remaining, len(reversed_words), reversed_words.encode('utf-8'))
+        EOM, received_word_list = udp.send_and_receive(udp_msg)
         reversed_words = udp.reversed_words_to_be_sent(received_word_list)
-        print(reversed_words)
+        print(EOM)
 
-    # udp_sock.close()
-
+    udp.udp_close()
+    print('udp_closed')
 
 if __name__ == '__main__':
     main()

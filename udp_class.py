@@ -17,14 +17,15 @@ class UDP():
         udp_rsp, sender = self.sock.recvfrom(1024)
 
         udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-
+        # getting the EOM, to figure out the last message from the server
+        EOM = udp_rsp_unpacked[2]
         # getting the words sent by the server
         words = udp_rsp_unpacked[5]
         words = words.decode('UTF-8')
         # putting the words in an array
         word_list = words.split(' ')
 
-        return word_list
+        return EOM, word_list
 
     def reversed_words_to_be_sent(self, list):
         # build the new message to be sent to the server from the reversed words
@@ -36,4 +37,5 @@ class UDP():
 
         return new_msg
 
-    # sock.close()
+    def udp_close(self):
+        self.sock.close()

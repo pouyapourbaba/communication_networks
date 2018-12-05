@@ -19,6 +19,7 @@ class TCP():
         tcp_rsp = self.sock.recv(1024)
         tcp_rsp = tcp_rsp.decode('UTF-8')
 
-        self.sock.close()
-
         return tcp_rsp
+
+    def tcp_close(self):
+        self.sock.close()
