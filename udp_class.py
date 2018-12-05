@@ -22,11 +22,10 @@ class UDP():
     # reverse the order of the words in the list
     def reverse(self, data):
         # getting the words sent by the server
-        words = data[5]
-        words = words.decode('UTF-8')
+        # words = data[5]
+        # words = words.decode('UTF-8')
         # putting the words in an array
-        word_list = words.split(' ')
-        print(word_list)
+        word_list = data.split(' ')
         # reversing the list of the words
         word_list.reverse()
         return word_list
