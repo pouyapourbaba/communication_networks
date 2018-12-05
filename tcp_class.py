@@ -1,25 +1,24 @@
 import socket
 
 class TCP():
+
+    # class variables
+    sock = socket.socket()
+
     def __init__(self, ip, port):
         self.ip = ip
         self.port = port
 
-    # initialize the TCP socket and connect to the given ip address and port number
-    def sock_connect(self):
-        self.sock = socket.socket()
+    def send_and_receive(self, msg):
+        # send message to the server via TCP, in byte strings
         self.sock.connect((self.ip, self.port))
-        return self.sock
+        msg = msg.encode('UTF-8')
+        self.sock.send(msg)
 
-    # send message to the server via TCP, in byte strings
-    def send(self, msg):
-        self.msg = msg.encode('UTF-8')
-        self.sock.send(self.msg)
-
-    # receive the data with a buffer of 1024 bytes
-    def receive(self):
+        # receive the data with a buffer of 1024 bytes
         tcp_rsp = self.sock.recv(1024)
         tcp_rsp = tcp_rsp.decode('UTF-8')
-        return tcp_rsp
 
-    
+        self.sock.close()
+
+        return tcp_rsp
