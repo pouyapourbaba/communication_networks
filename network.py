@@ -68,89 +68,186 @@ def main():
     # receive the data from the server
     udp_rsp = udp.receive()
     udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+    # print("unpacked")
     # print(udp_rsp_unpacked)
 
     # decrypt received messages
     data = udp_rsp_unpacked[5]
+    # print("before utf decode")
+    # print(data)
+
     data = data.decode('utf-8')
-    print(len(data))
+    # print("after utf decode")
+    # print(data)
+    data = data.rstrip('b\0')
+
     decrypted = ""
     for i in range(len(data)):
         decrypted = decrypted + chr(ord(data[i]) ^ ord(server_keys[0][i]))
-    print(decrypted)
-    print(len(decrypted))
+
+
     reversed_words = udp.reverse(decrypted)
     print(reversed_words)
 
-   #  ''' ****Send the reveres words back to the server 1st time**** '''
-   #  new_msg = udp.new_msg(reversed_words)
-   #  udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), new_msg.encode('utf-8'))
-   #  udp.send(udp_msg)
-   #  udp_rsp = udp.receive()
-   #  udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-   #  print(udp_rsp_unpacked)
-   #  reversed_words = udp.reverse(udp_rsp_unpacked)
-   #  #print(reversed_words)
-   #
-   #  ''' ****Send the reveres words back to the server 2nd time**** '''
-   #  new_msg = udp.new_msg(reversed_words)
-   #  udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), new_msg.encode('utf-8'))
-   #  udp.send(udp_msg)
-   #  udp_rsp = udp.receive()
-   #  udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-   #  print(udp_rsp_unpacked)
-   #  reversed_words = udp.reverse(udp_rsp_unpacked)
-   #  #print(reversed_words)
-   #
-   #  ''' ****Send the reveres words back to the server 3rd time**** '''
-   #  new_msg = udp.new_msg(reversed_words)
-   #  udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), new_msg.encode('utf-8'))
-   #  udp.send(udp_msg)
-   #  udp_rsp = udp.receive()
-   #  udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-   #  print(udp_rsp_unpacked)
-   #  reversed_words = udp.reverse(udp_rsp_unpacked)
-   #  #print(reversed_words)
-   #
-   #  ''' ****Send the reveres words back to the server 4th time**** '''
-   #  new_msg = udp.new_msg(reversed_words)
-   #  udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), new_msg.encode('utf-8'))
-   #  udp.send(udp_msg)
-   #  udp_rsp = udp.receive()
-   #  udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-   #  print(udp_rsp_unpacked)
-   #  reversed_words = udp.reverse(udp_rsp_unpacked)
-   #  #print(reversed_words)
-   #
+    ''' ****Send the reveres words back to the server 1st time**** '''
+    new_msg = udp.new_msg(reversed_words)
+    # print(new_msg)
+    content_enc = ""
+    for i in range(len(new_msg)):
+        content_enc = content_enc + chr(ord(new_msg[i]) ^ ord(client_keys[1][i]))
+
+    udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), content_enc.encode('utf-8'))
+    udp.send(udp_msg)
+    udp_rsp = udp.receive()
+    udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+
+    # decrypt received messages
+    data = udp_rsp_unpacked[5]
+    data = data.decode('utf-8')
+    data = data.rstrip('b\0')
+    decrypted = ""
+    for i in range(len(data)):
+        decrypted = decrypted + chr(ord(data[i]) ^ ord(server_keys[1][i]))
+
+
+    reversed_words = udp.reverse(decrypted)
+    print(reversed_words)
+
+    ''' ****Send the reveres words back to the server 2nd time**** '''
+    new_msg = udp.new_msg(reversed_words)
+    # encrypt the message
+    content_enc = ""
+    for i in range(len(new_msg)):
+        content_enc = content_enc + chr(ord(new_msg[i]) ^ ord(client_keys[2][i]))
+
+    udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), content_enc.encode('utf-8'))
+    udp.send(udp_msg)
+    udp_rsp = udp.receive()
+    udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+
+    # decrypt received messages
+    data = udp_rsp_unpacked[5]
+    data = data.decode('utf-8')
+    data = data.rstrip('b\0')
+    decrypted = ""
+    for i in range(len(data)):
+        decrypted = decrypted + chr(ord(data[i]) ^ ord(server_keys[2][i]))
+
+    reversed_words = udp.reverse(decrypted)
+    print(reversed_words)
+
+    ''' ****Send the reveres words back to the server 3rd time**** '''
+    new_msg = udp.new_msg(reversed_words)
+    # encrypt the message
+    content_enc = ""
+    for i in range(len(new_msg)):
+        content_enc = content_enc + chr(ord(new_msg[i]) ^ ord(client_keys[3][i]))
+
+    udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), content_enc.encode('utf-8'))
+    udp.send(udp_msg)
+    udp_rsp = udp.receive()
+    udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+
+    # decrypt received messages
+    data = udp_rsp_unpacked[5]
+    data = data.decode('utf-8')
+    data = data.rstrip('b\0')
+    decrypted = ""
+    for i in range(len(data)):
+        decrypted = decrypted + chr(ord(data[i]) ^ ord(server_keys[3][i]))
+
+    reversed_words = udp.reverse(decrypted)
+    print(reversed_words)
+
+    ''' ****Send the reveres words back to the server 4th time**** '''
+    new_msg = udp.new_msg(reversed_words)
+    # encrypt the message
+    content_enc = ""
+    for i in range(len(new_msg)):
+        content_enc = content_enc + chr(ord(new_msg[i]) ^ ord(client_keys[4][i]))
+    udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), content_enc.encode('utf-8'))
+    udp.send(udp_msg)
+    udp_rsp = udp.receive()
+    udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+
+    # decrypt received messages
+    data = udp_rsp_unpacked[5]
+    data = data.decode('utf-8')
+    data = data.rstrip('b\0')
+    decrypted = ""
+    for i in range(len(data)):
+        decrypted = decrypted + chr(ord(data[i]) ^ ord(server_keys[4][i]))
+    reversed_words = udp.reverse(decrypted)
+    print(reversed_words)
+
    #  ''' ****Send the reveres words back to the server 5th time**** '''
-   #  new_msg = udp.new_msg(reversed_words)
-   #  udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), new_msg.encode('utf-8'))
-   #  udp.send(udp_msg)
-   #  udp_rsp = udp.receive()
-   #  udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-   #  print(udp_rsp_unpacked)
-   #  reversed_words = udp.reverse(udp_rsp_unpacked)
-   #  #print(reversed_words)
-   #
-   #  ''' ****Send the reveres words back to the server 6th time**** '''
-   #  new_msg = udp.new_msg(reversed_words)
-   #  udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), new_msg.encode('utf-8'))
-   #  udp.send(udp_msg)
-   #  udp_rsp = udp.receive()
-   #  udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-   #  print(udp_rsp_unpacked)
-   #  reversed_words = udp.reverse(udp_rsp_unpacked)
-   #  #print(reversed_words)
+    new_msg = udp.new_msg(reversed_words)
+    # encrypt the message
+    content_enc = ""
+    for i in range(len(new_msg)):
+        content_enc = content_enc + chr(ord(new_msg[i]) ^ ord(client_keys[5][i]))
+    udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), content_enc.encode('utf-8'))
+    udp.send(udp_msg)
+    udp_rsp = udp.receive()
+    udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+
+    # decrypt received messages
+    data = udp_rsp_unpacked[5]
+    data = data.decode('utf-8')
+    data = data.rstrip('b\0')
+    decrypted = ""
+    for i in range(len(data)):
+        decrypted = decrypted + chr(ord(data[i]) ^ ord(server_keys[5][i]))
+    reversed_words = udp.reverse(decrypted)
+    print(reversed_words)
+
+    ''' ****Send the reveres words back to the server 6th time**** '''
+    new_msg = udp.new_msg(reversed_words)
+    # encrypt the message
+    content_enc = ""
+    for i in range(len(new_msg)):
+        content_enc = content_enc + chr(ord(new_msg[i]) ^ ord(client_keys[6][i]))
+    udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), content_enc.encode('utf-8'))
+    udp.send(udp_msg)
+    udp_rsp = udp.receive()
+    udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+    if (udp_rsp_unpacked[2] == True):
+        print(udp_rsp_unpacked[5])
+    # decrypt received messages
+    data = udp_rsp_unpacked[5]
+    data = data.decode('utf-8')
+    data = data.rstrip('b\0')
+    #print(data)
+    decrypted = ""
+    for i in range(len(data)):
+        decrypted = decrypted + chr(ord(data[i]) ^ ord(server_keys[6][i]))
+    #print(decrypted)
+    reversed_words = udp.reverse(decrypted)
+    print(reversed_words)
    #
    #  ''' ****Send the reveres words back to the server 7th time**** '''
-   #  new_msg = udp.new_msg(reversed_words)
-   #  udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), new_msg.encode('utf-8'))
-   #  udp.send(udp_msg)
-   #  udp_rsp = udp.receive()
-   #  udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-   #  print(udp_rsp_unpacked)
-   #  #reversed_words = udp.reverse(udp_rsp_unpacked)
-   #  #print(reversed_words)
+    new_msg = udp.new_msg(reversed_words)
+    # encrypt the message
+    content_enc = ""
+    for i in range(len(new_msg)):
+        content_enc = content_enc + chr(ord(new_msg[i]) ^ ord(client_keys[7][i]))
+    udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), content_enc.encode('utf-8'))
+    udp.send(udp_msg)
+    udp_rsp = udp.receive()
+    udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+
+    if (udp_rsp_unpacked[2] == True):
+        print(udp_rsp_unpacked[5])
+
+    # decrypt received messages
+    data = udp_rsp_unpacked[5]
+    data = data.decode('utf-8')
+    data = data.rstrip('b\0')
+    decrypted = ""
+    for i in range(len(data)):
+        decrypted = decrypted + chr(ord(data[i]) ^ ord(server_keys[7][i]))
+    reversed_words = udp.reverse(decrypted)
+    print(reversed_words)
    #
    #  udp_sock.close()
 

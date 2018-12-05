@@ -26,6 +26,8 @@ class UDP():
         # words = words.decode('UTF-8')
         # putting the words in an array
         word_list = data.split(' ')
+        # print("from udp_class ")
+        # print(word_list)
         # reversing the list of the words
         word_list.reverse()
         return word_list
