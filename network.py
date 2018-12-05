@@ -1,5 +1,9 @@
 import struct
 import sys
+import string
+import random
+import os
+import binascii
 
 # import the classes
 import tcp_class
@@ -11,11 +15,21 @@ def main():
     port = 10000
 
     ''' ****TCP PART**** '''
+    # create 20 random keys 64bytes size
+    keys =""
+    for i in range(20):
+         keys = keys + binascii.b2a_hex(os.urandom(32)).decode("utf-8") + '\r\n '
+
+    #print(keys)
+
     # send and receive via TCP protocol
     tcp = tcp_class.TCP(host, port)
     tcp_sock = tcp.sock_connect()
-    tcp.send("HELLO\r\n")
+    tcp.send("HELLO ENC\r\n " + keys + ".\r\n")
+    print("HELLO ENC\r\n " + keys + ".\r\n")
+
     tcp_rsp = tcp.receive()
+    print(tcp_rsp)
 
     # tokenize the data to extract the identity token and the UDP port
     tokens = tcp_rsp.split(' ')
@@ -51,7 +65,7 @@ def main():
     print(udp_rsp_unpacked)
 
     reversed_words = udp.reverse(udp_rsp_unpacked)
-    print(reversed_words)
+   # print(reversed_words)
 
     ''' ****Send the reveres words back to the server 1st time**** '''
     new_msg = udp.new_msg(reversed_words)
@@ -59,8 +73,9 @@ def main():
     udp.send(udp_msg)
     udp_rsp = udp.receive()
     udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+    print(udp_rsp_unpacked)
     reversed_words = udp.reverse(udp_rsp_unpacked)
-    print(reversed_words)
+    #print(reversed_words)
 
     ''' ****Send the reveres words back to the server 2nd time**** '''
     new_msg = udp.new_msg(reversed_words)
@@ -68,8 +83,9 @@ def main():
     udp.send(udp_msg)
     udp_rsp = udp.receive()
     udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+    print(udp_rsp_unpacked)
     reversed_words = udp.reverse(udp_rsp_unpacked)
-    print(reversed_words)
+    #print(reversed_words)
 
     ''' ****Send the reveres words back to the server 3rd time**** '''
     new_msg = udp.new_msg(reversed_words)
@@ -77,8 +93,9 @@ def main():
     udp.send(udp_msg)
     udp_rsp = udp.receive()
     udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+    print(udp_rsp_unpacked)
     reversed_words = udp.reverse(udp_rsp_unpacked)
-    print(reversed_words)
+    #print(reversed_words)
 
     ''' ****Send the reveres words back to the server 4th time**** '''
     new_msg = udp.new_msg(reversed_words)
@@ -86,8 +103,9 @@ def main():
     udp.send(udp_msg)
     udp_rsp = udp.receive()
     udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+    print(udp_rsp_unpacked)
     reversed_words = udp.reverse(udp_rsp_unpacked)
-    print(reversed_words)
+    #print(reversed_words)
 
     ''' ****Send the reveres words back to the server 5th time**** '''
     new_msg = udp.new_msg(reversed_words)
@@ -95,8 +113,9 @@ def main():
     udp.send(udp_msg)
     udp_rsp = udp.receive()
     udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+    print(udp_rsp_unpacked)
     reversed_words = udp.reverse(udp_rsp_unpacked)
-    print(reversed_words)
+    #print(reversed_words)
 
     ''' ****Send the reveres words back to the server 6th time**** '''
     new_msg = udp.new_msg(reversed_words)
@@ -104,8 +123,9 @@ def main():
     udp.send(udp_msg)
     udp_rsp = udp.receive()
     udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+    print(udp_rsp_unpacked)
     reversed_words = udp.reverse(udp_rsp_unpacked)
-    print(reversed_words)
+    #print(reversed_words)
 
     ''' ****Send the reveres words back to the server 7th time**** '''
     new_msg = udp.new_msg(reversed_words)
@@ -113,17 +133,9 @@ def main():
     udp.send(udp_msg)
     udp_rsp = udp.receive()
     udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-    reversed_words = udp.reverse(udp_rsp_unpacked)
-    print(reversed_words)
-
-    ''' ****Send the reveres words back to the server 8th time**** '''
-    new_msg = udp.new_msg(reversed_words)
-    udp_msg = struct.pack('!8s??HH64s', cid, ack, eom, data_remaining, len(new_msg), new_msg.encode('utf-8'))
-    udp.send(udp_msg)
-    udp_rsp = udp.receive()
-    udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-    reversed_words = udp.reverse(udp_rsp_unpacked)
-    print(reversed_words)
+    print(udp_rsp_unpacked)
+    #reversed_words = udp.reverse(udp_rsp_unpacked)
+    #print(reversed_words)
 
     udp_sock.close()
 
