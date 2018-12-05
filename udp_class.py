@@ -21,11 +21,14 @@ class UDP():
         EOM = udp_rsp_unpacked[2]
         # getting the words sent by the server
         words = udp_rsp_unpacked[5]
+        #print(words)
         words = words.decode('UTF-8')
+        words = words.rstrip('h\00')
+        #print(words)
         # putting the words in an array
-        word_list = words.split(' ')
+        #word_list = words.split(' ')
 
-        return EOM, word_list
+        return EOM, words
 
     def reversed_words_to_be_sent(self, list):
         # build the new message to be sent to the server from the reversed words
