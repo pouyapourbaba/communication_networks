@@ -1,6 +1,4 @@
-import socket
 import struct
-import sys
 import tcp_class
 import udp_class
 
