@@ -87,7 +87,6 @@ def main():
     udp.send(udp_msg)
 
     EOM, received_encrypted_words, remaining = udp.receive()
-    re = remaining
     # decrypt the data
     chunks = split64(received_encrypted_words)
     decrypted_chunks = ''
@@ -95,7 +94,6 @@ def main():
     for chunk in chunks:
         decrypted_chunks += decryption(chunk, server_keys[dec_iter])
         dec_iter += 1
-    #print(decrypted_chunks)
 
     reversed_words = udp.reversed_words_to_be_sent(decrypted_chunks.split(' '))
 
@@ -107,8 +105,6 @@ def main():
         for chunk in chunks_to_be_encrypted:
             new_msg.append(encryption(chunk, client_keys[key_index]))
             key_index += 1
-        #print('new message')
-        #print(new_msg)
 
         data_remaining1 = len(reversed_words)
         for msg in new_msg:
@@ -124,20 +120,10 @@ def main():
 
             for chunk in chunks1:
                 decrypted_chunks1 += decryption(chunk, server_keys[dec_iter])
-                #print(decrypted_chunks1)
-                #print(server_keys[dec_iter])
                 dec_iter += 1
-                print(dec_iter)
-            #print('the whole message to be sent')
-            #print(decrypted_chunks1)
-            #print(dec_iter)
             reversed_words = udp.reversed_words_to_be_sent(decrypted_chunks1.split(' '))
-            #print('still sending')
         else:
-            print('done')
             print(received_encrypted_words)
-
-    # print(dec_iter)
 
     udp.udp_close()
 
