@@ -9,26 +9,35 @@ class UDP():
         self.ip = ip
         self.port = port
 
-    def send_and_receive(self, msg):
+    def send(self, msg):
         # send message to the server via UDP
         self.sock.sendto(msg, (self.ip, int(self.port)))
 
-        # receive the data with a buffer of 1024 bytes
-        udp_rsp, sender = self.sock.recvfrom(1024)
+    def receive(self):
 
-        udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
-        # getting the EOM, to figure out the last message from the server
-        EOM = udp_rsp_unpacked[2]
-        # getting the words sent by the server
-        words = udp_rsp_unpacked[5]
-        #print(words)
-        words = words.decode('UTF-8')
-        words = words.rstrip('h\00')
+        multiples = ""
+        # receive the data with a buffer of 1024 bytes
+        while True:
+            udp_rsp, sender = self.sock.recvfrom(2048)
+            udp_rsp_unpacked = struct.unpack('8s??HH64s', udp_rsp)
+            # getting the EOM, to figure out the last message from the server
+            EOM = udp_rsp_unpacked[2]
+            data_remaining = udp_rsp_unpacked[3]
+            # getting the words sent by the server
+            words = udp_rsp_unpacked[5]
+            length = len(words)
+            words = words.decode('UTF-8')
+            words = words.rstrip('h\00')
+            re = data_remaining
+            multiples += words
+            if data_remaining == 0:
+                break
+
         #print(words)
         # putting the words in an array
         #word_list = words.split(' ')
 
-        return EOM, words
+        return EOM, multiples, data_remaining
 
     def reversed_words_to_be_sent(self, list):
         # build the new message to be sent to the server from the reversed words
