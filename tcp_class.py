@@ -16,7 +16,7 @@ class TCP():
         self.sock.send(msg)
 
         # receive the data with a buffer of 1024 bytes
-        tcp_rsp = self.sock.recv(1024)
+        tcp_rsp = self.sock.recv(2048)
         tcp_rsp = tcp_rsp.decode('UTF-8')
 
         return tcp_rsp

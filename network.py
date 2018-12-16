@@ -66,7 +66,6 @@ def main():
     for i in range(len(udp_port_and_keys) - 1):
         server_keys.append(udp_port_and_keys[i + 1])
 
-
     ''' ****UDP PART**** '''
     udp = udp_class.UDP(host, udp_port)
 
